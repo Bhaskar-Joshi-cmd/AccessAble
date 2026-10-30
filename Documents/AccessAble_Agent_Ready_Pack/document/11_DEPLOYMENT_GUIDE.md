@@ -61,9 +61,9 @@ Allowed methods: `GET`, `POST`, `PATCH`, `OPTIONS`. Allowed headers: `Content-Ty
 A page opened directly as a `file://` URL can cause browser-origin issues. Run the frontend using a local static server whose origin matches one of the configured `FRONTEND_ORIGIN` values.
 
 ## D. Deploy backend to Render
-1. In the Render service settings, set **Root Directory** to `backend` if using the suggested single-repository layout (`backend/` and `frontend/`). Ensure `backend/Dockerfile` exists beside `backend/pom.xml`.
+1. In the Render service settings, set **Root Directory** to `backend` if using the suggested single-repository layout (`backend/` and `frontend/`). The `Dockerfile` is located at `backend/Dockerfile` beside `backend/pom.xml`.
 2. Push the project to GitHub.
-3. In Render, create a **Web Service**, connect the repository, choose Docker as the runtime, and select the right Dockerfile path.
+3. In Render, create a **Web Service**, connect the repository, choose Docker as the runtime, and select `Dockerfile` as the Dockerfile path with build context `.` (the `backend` directory).
 4. Set environment variables in Render's environment settings:
    - `DB_URL`
    - `DB_USERNAME`
@@ -71,27 +71,15 @@ A page opened directly as a `file://` URL can cause browser-origin issues. Run t
    - `ADMIN_KEY`
    - `FRONTEND_ORIGIN` (set after Vercel deployment)
 5. Do not put secrets in the Dockerfile or code.
-6. Deploy and inspect build/runtime logs. The service must listen on the port exposed through `PORT` where supported by the host configuration; Spring Boot can be configured with `server.port=${PORT:8080}`.
-7. Test the deployed API in Postman before deploying the frontend.
+6. Render automatically supplies the `PORT` environment variable. The backend is configured with `server.port=${PORT:8080}`, so it will listen on Render's assigned port. Locally it defaults to `8080`.
+7. Test the deployed API in Postman before deploying the frontend. A suitable health-check endpoint is `GET /api/buildings` — it is public, returns HTTP 200 when the backend and database are working, and does not modify database records.
 8. Confirm public API responses work and admin endpoints reject requests without the key.
 
-The same starter is included at `document/starter-files/Dockerfile`. Copy it to `backend/Dockerfile` beside `backend/pom.xml`. The template for a Maven Spring Boot project is:
+The Dockerfile uses a multi-stage build:
+- **Build stage**: `eclipse-temurin:21-jdk`, runs `./mvnw -B clean package` (tests are NOT skipped) to produce `target/backend-0.0.1-SNAPSHOT.jar`
+- **Runtime stage**: `eclipse-temurin:21-jre`, copies only the executable JAR, runs as a non-root `appuser`, and starts with `java -jar app.jar`
 
-```dockerfile
-FROM maven:3.9-eclipse-temurin-21 AS build
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn -q -DskipTests package
-
-FROM eclipse-temurin:21-jre
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8080
-CMD ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar app.jar"]
-```
-
-This is intentionally a small Dockerfile. If the actual jar names or Maven setup differ, adapt the copy/build commands and test locally before deployment.
+See `backend/Dockerfile` and `backend/.dockerignore` for the complete configuration.
 
 ## E. Deploy frontend to Vercel
 1. If using the suggested single-repository layout, set Vercel **Root Directory** to `frontend`, where `index.html`, `styles.css` and `app.js` are located.

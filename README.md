@@ -103,5 +103,5 @@ Visit `http://127.0.0.1:5500` (or the port you chose for `FRONTEND_ORIGIN`).
 node --check frontend/app.js
 
 # Run backend tests:
-cd backend && ./mvnw clean test   # 69 tests, 0 failures
+cd backend && ./mvnw clean test   # 78 tests, 0 failures
 ```

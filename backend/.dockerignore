@@ -1,0 +1,26 @@
+# Git
+.git
+
+# Build output
+target/
+*.class
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS metadata
+.DS_Store
+
+# Documentation (not needed in build context)
+Documents/
+*.md
