@@ -1,0 +1,12 @@
+# Copy this property pattern into backend/src/main/resources/application.properties.
+# Do not put real credentials in this file. Configure the values as environment variables.
+spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.open-in-view=false
+spring.jpa.properties.hibernate.default_schema=public
+server.port=${PORT:8080}
+app.admin-key=${ADMIN_KEY}
+app.frontend-origin=${FRONTEND_ORIGIN:http://127.0.0.1:5500}

@@ -1,0 +1,22 @@
+# Java / Maven
+target/
+*.class
+*.log
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
+
+# Local secrets/config files - do not commit
+.env
+.env.*
+!.env.example
+application-local.properties
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,175 @@
+{
+  "info": {
+    "name": "AccessAble API",
+    "description": "Manual demo collection. Set baseUrl and adminKey variables. Use the SQL seed data to obtain a valid facilityId.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "adminKey",
+      "value": "REPLACE_WITH_LOCAL_ADMIN_KEY"
+    },
+    {
+      "key": "facilityId",
+      "value": "1"
+    },
+    {
+      "key": "reportId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Public read",
+      "item": [
+        {
+          "name": "List buildings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/buildings"
+          }
+        },
+        {
+          "name": "List facilities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/facilities"
+          }
+        },
+        {
+          "name": "Search/filter facilities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/facilities?buildingId=1&type=LIFT&search=lift"
+          }
+        },
+        {
+          "name": "Get facility details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/facilities/{{facilityId}}"
+          }
+        },
+        {
+          "name": "Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/summary"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public report workflow",
+      "item": [
+        {
+          "name": "Create pending report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"facilityId\": {{facilityId}},\n  \"issueType\": \"OUT_OF_SERVICE\",\n  \"suggestedStatus\": \"TEMPORARILY_UNAVAILABLE\",\n  \"description\": \"Demo report: this facility is not working as expected.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/reports"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin workflow",
+      "item": [
+        {
+          "name": "List pending reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Admin-Key",
+                "value": "{{adminKey}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/reports?status=PENDING"
+          }
+        },
+        {
+          "name": "Verify report",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Admin-Key",
+                "value": "{{adminKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"VERIFY\",\n  \"adminNote\": \"Checked during project demo.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/reports/{{reportId}}/review"
+          }
+        },
+        {
+          "name": "Reject report",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Admin-Key",
+                "value": "{{adminKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"REJECT\",\n  \"adminNote\": \"No issue observed during demo check.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/reports/{{reportId}}/review"
+          }
+        },
+        {
+          "name": "Mark facility available after repair",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Admin-Key",
+                "value": "{{adminKey}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"AVAILABLE\"\n}"
+            },
+            "url": "{{baseUrl}}/api/facilities/{{facilityId}}/status"
+          }
+        }
+      ]
+    }
+  ]
+}

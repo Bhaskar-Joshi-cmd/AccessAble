@@ -1,0 +1,29 @@
+# Compiled output
+target/
+*.class
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+
+# Log files
+*.log
+
+# Local environment files
+.env
+.env.*
+
+# Safe examples - do not exclude
+!.env.example
+
+# Maven
+.mvn/wrapper/
+
+# Compiled test reports and class files
+**/target/**/
+**/surefire-reports/**
+**/test-classes/**
